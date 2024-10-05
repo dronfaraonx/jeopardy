@@ -24,4 +24,12 @@ router.get('/api/questions', async (req, res) => {
   }
 });
 
+// router.put('/api/score', async (req, res) => {
+//   try {
+//     const {value} = req.body;
+//     const 
+//   } catch (error) {
+//     console.log('ERROR WHILE ADDING POINTS', error);
+//   }
+// })
 module.exports = router;

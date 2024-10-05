@@ -29,11 +29,12 @@ export default function Row() {
     getQuestions();
   }, []);
 
-  const handleOpenModal = (oneQuest, oneAnswer) => {
+  const handleOpenModal = (oneQuest, oneAnswer, oneValue) => {
     setShowModal(true);
     setCurrentContent({
       question: oneQuest,
-      answer: oneAnswer  
+      answer: oneAnswer,
+      value: oneValue,  
     })
   };
 
@@ -49,7 +50,24 @@ export default function Row() {
 
   const compareAnswerHandler =  () => {
     if(userAnswer === currentContent.answer) {
-      alert('Правильно')
+      {alert ("Верно")} 
+      //  try {
+      //   const response = await fetch("http://localhost:8000/game/api/score", {
+      //     method: 'POST',
+      //     headers: {
+      //       'Content-Type': 'application/json'
+      //     },
+      //     credentials: "include",
+      //     body: JSON.stringify(currentContent.value)
+      //   });
+      //   if (response.ok) {
+      //     alert('Добавлено')
+      //   } else {
+      //     throw new Error("NO POINTS");
+      //   }
+      // } catch (error) {
+      //   console.log(error);
+      // }
     } else {alert('Неверно')}
   }
 
@@ -57,7 +75,7 @@ export default function Row() {
     <div className="rowContainer">
       <h5>{category}</h5>
       {content.map((oneContent) => (
-          <button key={oneContent.id} className="questionBtn" onClick={() => handleOpenModal(oneContent.question, oneContent.answer)}>
+          <button key={oneContent.id} className="questionBtn" onClick={() => handleOpenModal(oneContent.question, oneContent.answer, oneContent.value)}>
             {oneContent.value}
           </button>
       ))}
