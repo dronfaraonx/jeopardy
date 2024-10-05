@@ -7,7 +7,7 @@ export default function Board() {
   const { user } = useUser(); 
   return (
     <>
-    <div>{user.username} счет: 0</div>
+    <div>{user?.username} счет: 0</div>
     <Row/>
     </>
   )

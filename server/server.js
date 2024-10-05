@@ -3,6 +3,7 @@ const express = require('express');
 require('dotenv').config()
 
 const indexRouter = require('./src/routes/index.routes')
+const gameRouter = require('./src/routes/game.routes')
 
 const app = express();
 
@@ -16,6 +17,7 @@ serverConfig(app);
 sessionConfig(app)
 
 app.use('/', indexRouter);
+app.use('/game', gameRouter);
 
 
 
