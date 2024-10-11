@@ -11,6 +11,7 @@ import MainPage from "./components/MainPage/MainPage";
 import LoginPage from "./components/Auth/Login";
 import RegistrationPage from "./components/Auth/Registration";
 import Board from "./components/Board/Board";
+import { ScoreProvider } from "./components/Context/ScoreContext";
 
 function App() {
   // const [user, setUser] = useState()
@@ -40,7 +41,9 @@ function App() {
 
   return (
     <UserProvider>
-      <RouterProvider router={router} />
+      <ScoreProvider>
+        <RouterProvider router={router} />
+      </ScoreProvider>
     </UserProvider>
   );
 }

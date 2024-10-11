@@ -2,14 +2,16 @@ import Board from "../Board/Board";
 import { useUser } from "../Context/auth";
 import { useNavigate } from "react-router-dom"; 
 
-
-// import Navbar from "./NavigationBar";
-
 export default function MainPage() {
   const { user } = useUser();
-    const navigate = useNavigate(); 
+  const navigate = useNavigate(); 
+
   const handleStartGame = () => {
-    navigate("/game"); 
+    if (user) {
+      navigate("/game"); 
+    } else {
+      alert('Нужно зарегистрироваться, чтобы играть');
+    }
   };
 
   return (

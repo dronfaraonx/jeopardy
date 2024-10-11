@@ -1,13 +1,28 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./board.css";
+import { useScore } from "../Context/ScoreContext";
+import { useUser } from "../Context/auth";
+
+interface ContentItem {
+  id: number;
+  question: string;
+  answer: string;
+  value: string;
+  category: {
+    name: string;
+  };
+}
 
 export default function Row() {
-  const [category, setCategory] = useState("");
-  const [content, setContent] = useState([]);
-  const [currentContent, setCurrentContent] = useState({})
-  const [userAnswer, setUserAnswer] = useState("")
-  const [showModal, setShowModal] = useState(false);
+  const { user } = useUser();
+  const [category, setCategory] = useState<string>("");
+  const [content, setContent] = useState<ContentItem[]>([]);
+  const [currentContent, setCurrentContent] = useState<ContentItem | null>(null);
+  const [userAnswer, setUserAnswer] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
+  
+  const { score, addPoints } = useScore();
 
   useEffect(() => {
     const getQuestions = async () => {
@@ -29,62 +44,66 @@ export default function Row() {
     getQuestions();
   }, []);
 
-  const handleOpenModal = (oneQuest, oneAnswer, oneValue) => {
+  const handleOpenModal = (oneQuest: string, oneAnswer: string, oneValue: string) => {
     setShowModal(true);
     setCurrentContent({
       question: oneQuest,
       answer: oneAnswer,
-      value: oneValue,  
-    })
+      value: oneValue,
+    });
   };
 
   const handleCloseModal = () => {
     setShowModal(false);
-    setCurrentContent({})
-    setUserAnswer("")
-  }; 
+    setCurrentContent(null);
+    setUserAnswer("");
+  };
 
-  const userAnswerHandler = (event) => {
-    setUserAnswer(event.target.value)
-  }
+  const userAnswerHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserAnswer(event.target.value);
+  };
 
-  const compareAnswerHandler =  () => {
-    if(userAnswer === currentContent.answer) {
-      {alert ("Верно")} 
-      //  try {
-      //   const response = await fetch("http://localhost:8000/game/api/score", {
-      //     method: 'POST',
-      //     headers: {
-      //       'Content-Type': 'application/json'
-      //     },
-      //     credentials: "include",
-      //     body: JSON.stringify(currentContent.value)
-      //   });
-      //   if (response.ok) {
-      //     alert('Добавлено')
-      //   } else {
-      //     throw new Error("NO POINTS");
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    } else {alert('Неверно')}
-  }
+  const compareAnswerHandler = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (currentContent && userAnswer.trim().toLowerCase() === currentContent.answer.trim().toLowerCase()) {
+      addPoints(currentContent.value);
+      alert("Верно");
+    } else {
+      alert("Неверно");
+    }
+  };
 
   return (
     <div className="rowContainer">
-      <h5>{category}</h5>
-      {content.map((oneContent) => (
-          <button key={oneContent.id} className="questionBtn" onClick={() => handleOpenModal(oneContent.question, oneContent.answer, oneContent.value)}>
-            {oneContent.value}
-          </button>
-      ))}
+      {user ? (
+        <>
+          <h5 className="me-2">{category}</h5>
+          {content.map((oneContent) => (
+            <button
+              key={oneContent.id}
+              className="questionBtn me-2"
+              onClick={() => handleOpenModal(oneContent.question, oneContent.answer, oneContent.value),
+                style= {{background-color='red'}}
+              }
+            >
+              {oneContent.value}
+            </button>
+          ))}
+        </>
+      ) : (
+        <h3>Log in to play</h3>
+      )}
       {showModal && (
         <div className="modal">
           <div className="modal-content">
             <form name="questionSet" onSubmit={compareAnswerHandler}>
-              <p>{currentContent.question}</p>
-              <input value={userAnswer} onChange={userAnswerHandler} type="text" placeholder="Ответ" />
+              <p>{currentContent?.question}</p>
+              <input
+                value={userAnswer}
+                onChange={userAnswerHandler}
+                type="text"
+                placeholder="Ответ"
+              />
               <button type="submit">Ответить</button>
             </form>
             <button onClick={handleCloseModal}>Закрыть</button>
